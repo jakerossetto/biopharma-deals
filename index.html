@@ -318,7 +318,9 @@ function parseValue(s){
   s=s.replace(/up to /i,"").replace(/approximately /i,"").replace(/over /i,"").replace(/~|implied equity|implied|\+/gi,"").replace(/[\$\u20ac\xa3,]/g,"").trim();
   if(s.toUpperCase().endsWith("B"))return parseFloat(s.slice(0,-1))||null;
   if(s.toUpperCase().endsWith("M"))return (parseFloat(s.slice(0,-1))/1000)||null;
-  return parseFloat(s)||null;
+  // No B/M suffix: it's a bare dollar figure (e.g. "1,000,000"), not billions. Scale down.
+  const n=parseFloat(s);
+  return n?n/1e9:null;
 }
 function fmtVal(s){if(!s||s.trim()==="")return"&#8212;";return s;}
 function fmtB(v){if(v==null)return"&#8212;";if(v>=1)return"$"+v.toFixed(1)+"B";return"$"+Math.round(v*1000)+"M";}
